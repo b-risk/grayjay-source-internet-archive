@@ -1,0 +1,116 @@
+{
+  "name": "Internet Archive",
+  "description": "Browse and play public audio and video from archive.org",
+  "author": "Wesley Swank",
+  "authorUrl": "https://github.com/swankwc",
+  "platformUrl": "https://archive.org",
+  "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
+  "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
+  "scriptUrl": "./InternetArchiveScript.js",
+  "version": 4,
+  "iconUrl": "https://archive.org/images/glogo.jpg",
+  "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
+  "scriptSignature": "H4eWjZvVs+DhMNajgz18mR52RiMOCml0kiGlErpNYAxvjIPR+FDZ8v1/8IbLeB53mhyOVrFZLJS1K5c9U5kY41Go0ZTMtUUGCRYEBlkKrxAHF159bmIZz0lteTEpr27eXo/dO7pHnWUuPbKToz27U1PMrbAnBkv7OO+aQi8Bpty6v+/ZK+cM3O/amzOVysl74u+K04GNXGUC2+AqODvjCVgvSFwsxiUhILdJkKUG8rhlBzy39epbfMWeeiYPwrEFOQQpxDG7AhmHqDLbTZj8mmw6mzrySR8/dzp5GX3g0BgCn+8j1/LM+7JSAI64GkWNnO/sArj+U9apDy4Q+M8g4QLusWxAEwYVrdOFGCTiNTURHsjdtIFIpBBPiejJxbzrEH9WeqhfdOC7CvXq2ipTwTHUVotYhnjrCwHaSdgznQvmWKFssy9DH0yZX9gpy16Zt00ooOprBF0byPDhGbmKxOplhVArHgiJRGFy4Vpj8F2x5cyLttIptXoUd5bFbhAf3DSyWEYohkT1kkLiDpR09mglBsPX0OLz8Q8RXDRtEtGgaWjV4a+paSf7To/rQz2fXyJrJ/w2ZOKh4tHnpb7fvR7tmzobVFMrUHflslbr4eKsqWy5NY+1XdOB6LhZc73Eud3CRAI1aJ5xHq45WkFMrenfm6VjXen3RWlms6u5DcU=",
+  "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqr5c6qHXuU0t5FVYgvQquAIFmi+KJT1mwjuDRZO0uDNsLW1p5tA7ozFNLmSuKIX9h8Hr775ES7LsGSeGWxEt/q7MmqG1NcMZPyNeDlBiberMNxYV1I6xBh0p/p1AYEOwtgRney4wGIisKdhYX7CyaumPcWMb7kvD7+l2Uy7UpL5eDicwq3yu7KNC7mJHejPLxDt6L+JViJcaPU1vE2ynqN837j2AD1T1WnpytyFZ0cbehgi7rI971gzTnWMH1oP9QHnLwn/Be3cQztvHpRreg2jrcHRwhF5aQuTO8bsWbuWOYlsHI8wxX6e586muqLQ2IkagOy5NSercySytmBDBoPR7CM3m4f1tlRnyZ4VOOdkQOtisqmNVOcjuANpk/kj6kYv+ATmDPvzFy4Veu8IcvhRadWun7qcsgxZITymyXBLQnRIFLGDAb5HpefA6UdxNpuD6HBkXQ6j6UEK7j1PtQR/GGWhoi3DUm2WF0SiwwHzwc99zb7eDORPgkBagzQNpC7itmHuHbdK19RhFS3pKY7xiUTSoflo4+deYWoiiHOWCKRGC4btBl0ML5tT5aDt4lgdkF5WQHRe4rzGzo6Q4xo4pZh6QrEjc05Uxw9ROUrdv3F8peoka8uInARV0aYVNIiJ7u0LyBnX7M6VT6BBQHLx4bMwdkm4tEz/CaLlJFykCAwEAAQ==",
+  "packages": [
+    "Http"
+  ],
+  "allowEval": false,
+  "allowUrls": [
+    "archive.org",
+    "ia800207.us.archive.org",
+    "ia600207.us.archive.org",
+    "*.archive.org"
+  ],
+  "settings": [
+    {
+      "variable": "homeSortIndex",
+      "name": "Home Feed Sort",
+      "description": "How the Home feed should be ordered.",
+      "type": "Dropdown",
+      "default": "0",
+      "options": [
+        "Most downloaded",
+        "Recently added"
+      ]
+    },
+    {
+      "variable": "homeMediaTypeIndex",
+      "name": "Home Feed Type",
+      "description": "Restrict the Home feed to audio, video, or both.",
+      "type": "Dropdown",
+      "default": "0",
+      "options": [
+        "Mixed audio and video",
+        "Video only",
+        "Audio only"
+      ]
+    },
+    {
+      "variable": "maxSourceCountIndex",
+      "name": "Max Playback Sources",
+      "description": "Limit how many candidate sources are exposed for each item.",
+      "type": "Dropdown",
+      "default": "1",
+      "options": [
+        "2",
+        "4",
+        "6",
+        "8"
+      ]
+    },
+    {
+      "variable": "strictFeedFilter",
+      "name": "Strict Feed Filter",
+      "description": "Hide low-signal items from home/search when they look less likely to contain playable media.",
+      "type": "Boolean",
+      "default": "false"
+    },
+    {
+      "variable": "verboseFailureDiagnostics",
+      "name": "Verbose Failure Diagnostics",
+      "description": "Log extra metadata and file candidates when an item cannot be played.",
+      "type": "Boolean",
+      "default": "false"
+    }
+  ],
+  "changelog": {
+    "1": [
+      "Initial MVP with home feed, search, collections as channels, item details, and direct playback."
+    ],
+    "2": [
+      "Improvement: Add home feed media-type setting;",
+      "Improvement: Add playback source count setting;",
+      "Improvement: Better media file filtering and ranking;",
+      "Improvement: Add HLS and DASH manifest support when available;",
+      "Fix: Reduce non-playable and duplicate file candidates in item details;"
+    ],
+    "3": [
+      "Improvement: Add strict feed filter setting to hide likely non-playable results;",
+      "Improvement: Add verbose failure diagnostics setting;",
+      "Improvement: Add broader fallback pass for playable source detection;",
+      "Fix: Improve no-playable-media errors with item identifiers and candidate file summaries;"
+    ],
+    "4": [
+      "Sign release metadata; add scriptSignature and scriptPublicKey."
+    ]
+  },
+  "Testing": {
+    "Search": {
+      "queries": [
+        "big buck bunny",
+        "public domain jazz"
+      ]
+    },
+    "GetContentDetails": {
+      "urls": [
+        "https://archive.org/details/BigBuckBunny_124"
+      ]
+    },
+    "GetChannel": {
+      "urls": [
+        "https://archive.org/details/opensource_movies#collection"
+      ]
+    }
+  }
+}

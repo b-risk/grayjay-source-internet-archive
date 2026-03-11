@@ -34,6 +34,18 @@ Your plugin config URL will then be:
 https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json
 ```
 
+## Important Note on Script Signing
+
+Grayjay plugins are signed with a private key to prevent tampering. Because I have modified the script, the previous signature is now invalid.
+
+To get the plugin working again:
+1. **Merge my changes** into your `main` branch on GitHub.
+2. **Uninstall** the plugin from your Grayjay app if it's giving you a "Signature is invalid" error.
+3. **Reinstall** it from the GitHub Pages URL. Since the new version (v7) has the signature fields removed, Grayjay will treat it as an unsigned community plugin and allow it to install.
+
+### If you want to re-sign it:
+If you want to re-sign the plugin with your own key, use the [Grayjay Developer Tools](https://grayjay.app/developers.html) to generate a new `scriptSignature` for the `InternetArchiveScript.js` file and update `InternetArchiveConfig.json` accordingly.
+
 ## Required config updates before release
 
 Update these fields in `InternetArchiveConfig.json`:

@@ -80,21 +80,42 @@ source.getHome = function(continuationToken) {
 };
 
 source.searchSuggestions = function(query) {
-  return [];
+  if (!query || query.length < 2) {
+    return [];
+  }
+  const searchQuery = 'title:(' + quoteQuery(query + "*") + ') AND (mediatype:movies OR mediatype:audio)';
+  const url = buildAdvancedSearchUrl(searchQuery, 10, 1, ["downloads desc"]);
+  try {
+    const response = apiGetJson(url);
+    const docs = getDocs(response);
+    return docs.map(function(doc) {
+      return safeString(doc.title);
+    }).filter(function(title, index, self) {
+      return title && self.indexOf(title) === index;
+    });
+  } catch (e) {
+    return [];
+  }
 };
 
 source.getSearchCapabilities = function() {
   return {
-    types: [Type.Feed.Mixed],
-    sorts: [Type.Order.Chronological],
+    types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
+    sorts: [Type.Order.Chronological, "Most Downloaded"],
     filters: []
   };
 };
 
 source.search = function(query, type, order, filters, continuationToken) {
   const page = getPageFromToken(continuationToken);
-  const searchQuery = buildSearchQuery(query);
-  const sort = order === Type.Order.Chronological ? ["publicdate desc"] : null;
+  const searchQuery = buildSearchQuery(query, type);
+  let sort = null;
+  if (order === Type.Order.Chronological) {
+    sort = ["publicdate desc"];
+  } else if (order === "Most Downloaded") {
+    sort = ["downloads desc"];
+  }
+
   const url = buildAdvancedSearchUrl(searchQuery, SEARCH_ROWS, page, sort);
   const response = apiGetJson(url);
   const docs = getDocs(response);
@@ -102,6 +123,7 @@ source.search = function(query, type, order, filters, continuationToken) {
   return new InternetArchiveVideoPager(results, hasMoreResults(response, page, SEARCH_ROWS), {
     kind: "search",
     query: query,
+    type: type,
     order: order,
     page: page + 1
   });
@@ -109,8 +131,8 @@ source.search = function(query, type, order, filters, continuationToken) {
 
 source.getSearchChannelContentsCapabilities = function() {
   return {
-    types: [Type.Feed.Mixed],
-    sorts: [Type.Order.Chronological],
+    types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
+    sorts: [Type.Order.Chronological, "Most Downloaded"],
     filters: []
   };
 };
@@ -118,8 +140,14 @@ source.getSearchChannelContentsCapabilities = function() {
 source.searchChannelContents = function(channelUrl, query, type, order, filters, continuationToken) {
   const identifier = extractCollectionIdentifier(channelUrl);
   const page = getPageFromToken(continuationToken);
-  const collectionQuery = buildCollectionQuery(identifier, query);
-  const sort = order === Type.Order.Chronological ? ["publicdate desc"] : null;
+  const collectionQuery = buildCollectionQuery(identifier, query, type);
+  let sort = null;
+  if (order === Type.Order.Chronological) {
+    sort = ["publicdate desc"];
+  } else if (order === "Most Downloaded") {
+    sort = ["downloads desc"];
+  }
+
   const url = buildAdvancedSearchUrl(collectionQuery, CHANNEL_ROWS, page, sort);
   const response = apiGetJson(url);
   const docs = getDocs(response);
@@ -128,6 +156,7 @@ source.searchChannelContents = function(channelUrl, query, type, order, filters,
     kind: "searchChannelContents",
     url: channelUrl,
     query: query,
+    type: type,
     order: order,
     page: page + 1
   });
@@ -160,8 +189,14 @@ source.getChannel = function(url) {
 source.getChannelContents = function(url, type, order, filters, continuationToken) {
   const identifier = extractCollectionIdentifier(url);
   const page = getPageFromToken(continuationToken);
-  const query = buildCollectionQuery(identifier);
-  const sort = order === Type.Order.Chronological ? ["publicdate desc"] : null;
+  const query = buildCollectionQuery(identifier, null, type);
+  let sort = null;
+  if (order === Type.Order.Chronological) {
+    sort = ["publicdate desc"];
+  } else if (order === "Most Downloaded") {
+    sort = ["downloads desc"];
+  }
+
   const searchUrl = buildAdvancedSearchUrl(query, CHANNEL_ROWS, page, sort);
   const response = apiGetJson(searchUrl);
   const docs = getDocs(response);
@@ -169,6 +204,7 @@ source.getChannelContents = function(url, type, order, filters, continuationToke
   return new InternetArchiveVideoPager(results, hasMoreResults(response, page, CHANNEL_ROWS), {
     kind: "channelContents",
     url: url,
+    type: type,
     order: order,
     page: page + 1
   });
@@ -197,6 +233,13 @@ source.getContentDetails = function(url) {
   const mediaDescriptor = createMediaDescriptor(sources);
   const hlsSource = sources.hls.length > 0 ? sources.hls[0] : null;
   const dashSource = sources.dash.length > 0 ? sources.dash[0] : null;
+  const subtitles = buildSubtitles(identifier, payload.files || []);
+
+  let description = stringifyDescription(payload.metadata.description);
+  const subjects = safeString(payload.metadata.subject);
+  if (subjects) {
+    description += "\n\nTags: " + subjects;
+  }
 
   return new PlatformVideoDetails({
     id: makePlatformId(identifier),
@@ -209,17 +252,60 @@ source.getContentDetails = function(url) {
     viewCount: toNumber(payload.metadata.downloads),
     url: normalizeDetailsUrl(identifier),
     isLive: false,
-    description: stringifyDescription(payload.metadata.description),
+    description: description,
     video: mediaDescriptor,
     hls: hlsSource,
     dash: dashSource,
     live: null,
-    subtitles: []
+    subtitles: subtitles
   });
 };
 
 source.getComments = function(url, continuationToken) {
-  return new CommentPager([], false);
+  if (continuationToken) {
+    return new CommentPager([], false);
+  }
+  const identifier = extractDetailsIdentifier(url);
+  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
+  const reviews = payload.reviews || [];
+
+  const results = reviews.map(function(review) {
+    const authorName = safeString(review.reviewer);
+    const authorId = safeString(review.reviewer_itemname || review.reviewer);
+    const title = safeString(review.reviewtitle);
+    const body = safeString(review.reviewbody);
+    const stars = safeString(review.stars);
+
+    let message = "";
+    if (title) {
+      message += title + "\n\n";
+    }
+    if (stars) {
+      message += "Rating: " + stars + "/5 stars\n";
+    }
+    message += body;
+
+    return new Comment({
+      contextUrl: url,
+      author: new PlatformAuthorLink(
+        makePlatformId("reviewer:" + authorId),
+        authorName,
+        BASE_URL + "/details/" + authorId,
+        null
+      ),
+      message: message,
+      timestamp: toUnixTimestamp(review.reviewdate || review.createdate),
+      replyCount: 0,
+      rating: (function() {
+        const stars = toNumber(review.stars);
+        if (stars >= 4) return new Rating(1, 0);
+        if (stars <= 2) return new Rating(0, 1);
+        return new Rating(0, 0);
+      })()
+    });
+  });
+
+  return new CommentPager(results, false);
 };
 
 source.getSubComments = function(comment) {
@@ -236,13 +322,13 @@ class InternetArchiveVideoPager extends VideoPager {
       return source.getHome(this.context.page);
     }
     if (this.context.kind === "search") {
-      return source.search(this.context.query, Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.search(this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
     }
     if (this.context.kind === "channelContents") {
-      return source.getChannelContents(this.context.url, Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.getChannelContents(this.context.url, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
     }
     if (this.context.kind === "searchChannelContents") {
-      return source.searchChannelContents(this.context.url, this.context.query, Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.searchChannelContents(this.context.url, this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
     }
     return new VideoPager([], false);
   }
@@ -267,17 +353,29 @@ function buildMediaQuery() {
   return getMediaTypeQuery(pluginSettings.homeMediaTypeIndex) + " AND -mediatype:(collection)";
 }
 
-function buildSearchQuery(query) {
+function buildSearchQuery(query, type) {
   const text = quoteQuery(query);
-  return getMediaTypeQuery() + " AND -mediatype:(collection) AND (" + text + ")";
+  let mediaQuery = getMediaTypeQuery();
+  if (type === Type.Feed.Video) {
+    mediaQuery = 'mediatype:("movies")';
+  } else if (type === Type.Feed.Audio) {
+    mediaQuery = 'mediatype:("audio")';
+  }
+  return mediaQuery + " AND -mediatype:(collection) AND (" + text + ")";
 }
 
 function buildCollectionSearchQuery(query) {
   return 'mediatype:("collection") AND (' + quoteQuery(query) + ")";
 }
 
-function buildCollectionQuery(identifier, query) {
-  let base = getMediaTypeQuery() + ' AND -mediatype:(collection) AND collection:("' + escapeQueryValue(identifier) + '")';
+function buildCollectionQuery(identifier, query, type) {
+  let mediaQuery = getMediaTypeQuery();
+  if (type === Type.Feed.Video) {
+    mediaQuery = 'mediatype:("movies")';
+  } else if (type === Type.Feed.Audio) {
+    mediaQuery = 'mediatype:("audio")';
+  }
+  let base = mediaQuery + ' AND -mediatype:(collection) AND collection:("' + escapeQueryValue(identifier) + '")';
   if (query && safeString(query).length > 0) {
     base += " AND (" + quoteQuery(query) + ")";
   }
@@ -411,6 +509,33 @@ function buildThumbnails(identifier) {
   return new Thumbnails([
     new Thumbnail(IMAGE_URL + encodeURIComponent(identifier), 512)
   ]);
+}
+
+function buildSubtitles(identifier, files) {
+  const subs = [];
+  for (let i = 0; i < files.length; i += 1) {
+    const file = files[i];
+    if (!file || !file.name) {
+      continue;
+    }
+    const lowerName = file.name.toLowerCase();
+    let mime = "";
+    if (lowerName.endsWith(".srt")) {
+      mime = "text/srt";
+    } else if (lowerName.endsWith(".vtt")) {
+      mime = "text/vtt";
+    }
+
+    if (mime) {
+      subs.push({
+        name: safeString(file.title || file.name),
+        url: buildDownloadUrl(identifier, file.name),
+        mime: mime,
+        format: lowerName.endsWith(".srt") ? "srt" : "vtt"
+      });
+    }
+  }
+  return subs;
 }
 
 function buildSources(identifier, files) {

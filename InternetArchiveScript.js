@@ -105,19 +105,21 @@ source.searchSuggestions = function(query) {
 
 source.getSearchCapabilities = function() {
   return {
-    types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
+    types: [Type.Feed.Mixed, Type.Feed.Videos, Type.Feed.Videos],
     sorts: [Type.Order.Chronological, "Most Downloaded"],
     filters: [
-      {
-        id: "year",
-        name: "Year",
-        type: "FreeText"
-      },
-      {
-        id: "language",
-        name: "Language",
-        type: "FreeText"
-      }
+      new FilterGroup("Language", [
+        new FilterCapability("English", "English", "language"),
+        new FilterCapability("Spanish", "Spanish", "language"),
+        new FilterCapability("French", "French", "language"),
+        new FilterCapability("German", "German", "language"),
+        new FilterCapability("Portuguese", "Portuguese", "language"),
+        new FilterCapability("Russian", "Russian", "language"),
+        new FilterCapability("Chinese", "Chinese", "language"),
+        new FilterCapability("Japanese", "Japanese", "language"),
+        new FilterCapability("Italian", "Italian", "language"),
+        new FilterCapability("Silent", "Silent", "language")
+      ], false, "language")
     ]
   };
 };
@@ -148,15 +150,9 @@ source.search = function(query, type, order, filters, continuationToken) {
 
 source.getSearchChannelContentsCapabilities = function() {
   return {
-    types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
+    types: [Type.Feed.Mixed, Type.Feed.Videos, Type.Feed.Videos],
     sorts: [Type.Order.Chronological, "Most Downloaded"],
-    filters: [
-      {
-        id: "year",
-        name: "Year",
-        type: "FreeText"
-      }
-    ]
+    filters: []
   };
 };
 
@@ -344,13 +340,12 @@ source.getComments = function(url, continuationToken) {
         null
       ),
       message: message,
-      timestamp: toUnixTimestamp(review.reviewdate || review.createdate),
+      date: toUnixTimestamp(review.reviewdate || review.createdate),
       replyCount: 0,
       rating: (function() {
         const stars = toNumber(review.stars);
-        if (stars >= 4) return new Rating(1, 0);
-        if (stars <= 2) return new Rating(0, 1);
-        return new Rating(0, 0);
+        if (stars > 0) return new RatingScaler(stars / 5);
+        return new RatingLikes(0);
       })()
     });
   });
@@ -406,20 +401,17 @@ function buildMediaQuery() {
 function buildSearchQuery(query, type, filters) {
   const text = quoteQuery(query);
   let mediaQuery = getMediaTypeQuery();
-  if (type === Type.Feed.Video) {
+  if (type === Type.Feed.Videos) {
     mediaQuery = 'mediatype:("movies")';
-  } else if (type === Type.Feed.Audio) {
+  } else if (type === Type.Feed.Videos) {
     mediaQuery = 'mediatype:("audio")';
   }
 
   let fullQuery = mediaQuery + " AND -mediatype:(collection) AND (" + text + ")";
   if (filters) {
-    if (filters.year) {
-      // Use IA's dedicated "year" field — more reliable than date: for year-only queries
-      fullQuery += ' AND year:(' + escapeQueryValue(filters.year) + ')';
-    }
-    if (filters.language) {
-      fullQuery += ' AND language:(' + escapeQueryValue(filters.language) + ')';
+    const langVal = filters && filters['language'] && filters['language'][0];
+    if (langVal) {
+      fullQuery += ' AND language:(' + escapeQueryValue(langVal) + ')';
     }
   }
   return fullQuery;
@@ -431,20 +423,18 @@ function buildCollectionSearchQuery(query) {
 
 function buildCollectionQuery(identifier, query, type, filters) {
   let mediaQuery = getMediaTypeQuery();
-  if (type === Type.Feed.Video) {
+  if (type === Type.Feed.Videos) {
     mediaQuery = 'mediatype:("movies")';
-  } else if (type === Type.Feed.Audio) {
+  } else if (type === Type.Feed.Videos) {
     mediaQuery = 'mediatype:("audio")';
   }
   let base = mediaQuery + ' AND -mediatype:(collection) AND collection:("' + escapeQueryValue(identifier) + '")';
   if (query && safeString(query).length > 0) {
     base += " AND (" + quoteQuery(query) + ")";
   }
-  if (filters && filters.year) {
-    base += ' AND year:(' + escapeQueryValue(filters.year) + ')';
-  }
-  if (filters && filters.language) {
-    base += ' AND language:(' + escapeQueryValue(filters.language) + ')';
+  const colLangVal = filters && filters['language'] && filters['language'][0];
+  if (colLangVal) {
+    base += ' AND language:(' + escapeQueryValue(colLangVal) + ')';
   }
   return base;
 }
@@ -594,14 +584,16 @@ function buildSubtitles(identifier, files) {
     }
 
     if (mime) {
-      subs.push(new SubtitleSource({
+      const subUrl = buildDownloadUrl(identifier, file.name);
+      subs.push({
         name: safeString(file.title || file.name),
-        url: buildDownloadUrl(identifier, file.name),
+        url: subUrl,
         format: lowerName.endsWith(".srt") ? "srt" : "vtt",
         getSubtitles: function() {
-          return http.GET(buildDownloadUrl(identifier, file.name), {}, false).body;
+          const resp = http.GET(subUrl, {}, false);
+          return resp.isOk ? resp.body : "";
         }
-      }));
+      });
     }
   }
   return subs;

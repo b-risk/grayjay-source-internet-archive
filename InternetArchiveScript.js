@@ -18,10 +18,13 @@ const SEARCH_FIELDS = [
   "mediatype",
   "description",
   "date",
+  "year",
   "publicdate",
   "downloads",
   "item_size",
-  "collection"
+  "collection",
+  "language",
+  "subject"
 ];
 
 const AUDIO_EXTENSIONS = {
@@ -83,8 +86,10 @@ source.searchSuggestions = function(query) {
   if (!query || query.length < 2) {
     return [];
   }
-  const searchQuery = 'title:(' + quoteQuery(query + "*") + ') AND (mediatype:movies OR mediatype:audio)';
-  const url = buildAdvancedSearchUrl(searchQuery, 10, 1, ["downloads desc"]);
+  // Use a simple fulltext search sorted by downloads — IA's Solr wildcard prefix
+  // queries are unreliable and often return 0 results for short terms.
+  const searchQuery = '(mediatype:movies OR mediatype:audio) AND -mediatype:(collection) AND (' + quoteQuery(query) + ')';
+  const url = buildAdvancedSearchUrl(searchQuery, 8, 1, ["downloads desc"]);
   try {
     const response = apiGetJson(url);
     const docs = getDocs(response);
@@ -410,10 +415,11 @@ function buildSearchQuery(query, type, filters) {
   let fullQuery = mediaQuery + " AND -mediatype:(collection) AND (" + text + ")";
   if (filters) {
     if (filters.year) {
-      fullQuery += ' AND date:("' + escapeQueryValue(filters.year) + '")';
+      // Use IA's dedicated "year" field — more reliable than date: for year-only queries
+      fullQuery += ' AND year:(' + escapeQueryValue(filters.year) + ')';
     }
     if (filters.language) {
-      fullQuery += ' AND language:("' + escapeQueryValue(filters.language) + '")';
+      fullQuery += ' AND language:(' + escapeQueryValue(filters.language) + ')';
     }
   }
   return fullQuery;
@@ -435,7 +441,10 @@ function buildCollectionQuery(identifier, query, type, filters) {
     base += " AND (" + quoteQuery(query) + ")";
   }
   if (filters && filters.year) {
-    base += ' AND date:("' + escapeQueryValue(filters.year) + '")';
+    base += ' AND year:(' + escapeQueryValue(filters.year) + ')';
+  }
+  if (filters && filters.language) {
+    base += ' AND language:(' + escapeQueryValue(filters.language) + ')';
   }
   return base;
 }
@@ -585,12 +594,14 @@ function buildSubtitles(identifier, files) {
     }
 
     if (mime) {
-      subs.push({
+      subs.push(new SubtitleSource({
         name: safeString(file.title || file.name),
         url: buildDownloadUrl(identifier, file.name),
-        mime: mime,
-        format: lowerName.endsWith(".srt") ? "srt" : "vtt"
-      });
+        format: lowerName.endsWith(".srt") ? "srt" : "vtt",
+        getSubtitles: function() {
+          return http.GET(buildDownloadUrl(identifier, file.name), {}, false).body;
+        }
+      }));
     }
   }
   return subs;

@@ -7,10 +7,10 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 10,
+  "version": 11,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "Cd6Lse+iFDSv+ukjdvyu2GvFKUjSp95fi1B3HqFLdwCHLc52hrU1/02hmAt4If1mkkSIdFB0TBYdRmbRB6Z4EmrcZybzFfX3xxDLgRB1QB2IfYa+2efXvs0lF6ExUbqPyblZYYDxTI2QhWWcz83aGpTzpHBvbkuibwF+56lScbc+LReGWfklLvqlnOhSBHaVTpwRDaCOcz3CSO5EQKIqiNWLa7lPyMA4lXe0OZwrKfQ/pH9N+v04fe+g2Ep3UYPutrzpEaoIgObgETntyYF5354mPPZk+ck4+hr85PKjbp+n7rdzpGWk8jBZov8GNilRxzpMXAy2GgKcEZdplQHeQaOsxYcu6I2NfhgwSu56/mGr+sghBgqNNHtcQflUW98BMk9VEsCw7t5/l4MFhuzF6T9it976CPXlAALSInK+UT+mAFzv9siTBk/QdArgl5s94SotdJshqy24AuLFTLEsBvyzLATCtrp2Cea8AaZvKbvthjWMe3YkpJU7jQj6I92UyQ5M+DgTtE/hHw3IrW41wUUqTNYrz3gza+irdnJeVN0EA83Ji4AWepA3iKrlryFVMHtk8tBwZBXo3Y3yOoMtxjRslR+p5WbC3TJ6pJZR+dPOm3dJxF5TTmeggW530Jxj6gtq+zqbgN4vzOvDFRwMLCCniHKq5dV82M9s+rv76+I=",
+  "scriptSignature": "lZWXcBwZ6WwQkL/JtBeVkZ+7EZwrxTas3rPX0uachNxsVlEFaAmSOSvj9MW1aZWoglxq8fg1yQtwKddEZy/Cs9Lt2HY4bkP0Wlcjdo449gbR9R9LGlo4pmEhLqU1N7bvV08tvaDpwtCRNjp10EPVXOLbFB6UR+aaImLNRIeVGM9UiRaqflYJD5xNlVRNP0fOsLSVONINlQxAmNNx0MWymFH+ZGt3ZEpeSNqoiYdzZxKrw7VGQCZEoGO5ZqrSmkYwOQdEwijrqrPZT5Y3mxQL6+X+7s6cXL/leca7R3eijfWYLMcB0sqmt3vK1Lly0Ri1bYBQ0/unjyR+o0724fLuJTBYmKGgN5XnN2GHpor7+c800XC63QdWE3C9nUuqtAY2pC7cBjuJYGbGAVwBteMg30zLq8diHM+l/4IM7KuMmUSJO1Q2BU7Cv2at9UjNfNEh74M+2SoNi3HiDytXspu/2zXWWTtgwAaY16bMHg2cjbV0pzmmWBDHtLSxOWBuEg7pD+V7XPJ2g8oUJL93t3b0xwDU14r9B+9P+3Dzv3uTyWlFByw8xeNaNytqAfR+aDvnIFxqB41csYFZJCCIgEZt2/hi6ozEq6iVGtxGDOT87p3N61timZ1uBCCCMbV6GuyGCI9TQ08ymPXW5Xz5a3Z7r5gZl+omGApoh+Jnn2Pnuwk=",
   "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqr5c6qHXuU0t5FVYgvQquAIFmi+KJT1mwjuDRZO0uDNsLW1p5tA7ozFNLmSuKIX9h8Hr775ES7LsGSeGWxEt/q7MmqG1NcMZPyNeDlBiberMNxYV1I6xBh0p/p1AYEOwtgRney4wGIisKdhYX7CyaumPcWMb7kvD7+l2Uy7UpL5eDicwq3yu7KNC7mJHejPLxDt6L+JViJcaPU1vE2ynqN837j2AD1T1WnpytyFZ0cbehgi7rI971gzTnWMH1oP9QHnLwn/Be3cQztvHpRreg2jrcHRwhF5aQuTO8bsWbuWOYlsHI8wxX6e586muqLQ2IkagOy5NSercySytmBDBoPR7CM3m4f1tlRnyZ4VOOdkQOtisqmNVOcjuANpk/kj6kYv+ATmDPvzFy4Veu8IcvhRadWun7qcsgxZITymyXBLQnRIFLGDAb5HpefA6UdxNpuD6HBkXQ6j6UEK7j1PtQR/GGWhoi3DUm2WF0SiwwHzwc99zb7eDORPgkBagzQNpC7itmHuHbdK19RhFS3pKY7xiUTSoflo4+deYWoiiHOWCKRGC4btBl0ML5tT5aDt4lgdkF5WQHRe4rzGzo6Q4xo4pZh6QrEjc05Uxw9ROUrdv3F8peoka8uInARV0aYVNIiJ7u0LyBnX7M6VT6BBQHLx4bMwdkm4tEz/CaLlJFykCAwEAAQ==",
   "packages": [
     "Http"
@@ -118,6 +118,13 @@
     ],
     "10": [
       "Fix: re-sign with correct SHA-512 + dedicated grayjay_signing RSA key per official docs."
+    ],
+    "11": [
+      "Fix: search suggestions now use reliable fulltext query (consistent results)",
+      "Fix: year filter uses IA's dedicated year: field instead of date:",
+      "Fix: language filter now also applied in collection queries",
+      "Fix: language/year/subject added to search fields so they return in results",
+      "Fix: subtitles use SubtitleSource constructor per Grayjay API"
     ]
   },
   "Testing": {

@@ -102,13 +102,24 @@ source.getSearchCapabilities = function() {
   return {
     types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
     sorts: [Type.Order.Chronological, "Most Downloaded"],
-    filters: []
+    filters: [
+      {
+        id: "year",
+        name: "Year",
+        type: "FreeText"
+      },
+      {
+        id: "language",
+        name: "Language",
+        type: "FreeText"
+      }
+    ]
   };
 };
 
 source.search = function(query, type, order, filters, continuationToken) {
   const page = getPageFromToken(continuationToken);
-  const searchQuery = buildSearchQuery(query, type);
+  const searchQuery = buildSearchQuery(query, type, filters);
   let sort = null;
   if (order === Type.Order.Chronological) {
     sort = ["publicdate desc"];
@@ -125,6 +136,7 @@ source.search = function(query, type, order, filters, continuationToken) {
     query: query,
     type: type,
     order: order,
+    filters: filters,
     page: page + 1
   });
 };
@@ -133,14 +145,20 @@ source.getSearchChannelContentsCapabilities = function() {
   return {
     types: [Type.Feed.Mixed, Type.Feed.Video, Type.Feed.Audio],
     sorts: [Type.Order.Chronological, "Most Downloaded"],
-    filters: []
+    filters: [
+      {
+        id: "year",
+        name: "Year",
+        type: "FreeText"
+      }
+    ]
   };
 };
 
 source.searchChannelContents = function(channelUrl, query, type, order, filters, continuationToken) {
   const identifier = extractCollectionIdentifier(channelUrl);
   const page = getPageFromToken(continuationToken);
-  const collectionQuery = buildCollectionQuery(identifier, query, type);
+  const collectionQuery = buildCollectionQuery(identifier, query, type, filters);
   let sort = null;
   if (order === Type.Order.Chronological) {
     sort = ["publicdate desc"];
@@ -158,6 +176,7 @@ source.searchChannelContents = function(channelUrl, query, type, order, filters,
     query: query,
     type: type,
     order: order,
+    filters: filters,
     page: page + 1
   });
 };
@@ -206,6 +225,7 @@ source.getChannelContents = function(url, type, order, filters, continuationToke
     url: url,
     type: type,
     order: order,
+    filters: filters,
     page: page + 1
   });
 };
@@ -259,6 +279,31 @@ source.getContentDetails = function(url) {
     live: null,
     subtitles: subtitles
   });
+};
+
+source.getRelatedContent = function(url, continuationToken) {
+  const identifier = extractDetailsIdentifier(url);
+  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
+  const metadata = payload.metadata || {};
+  const mediatype = safeString(metadata.mediatype);
+  const collection = pickPrimaryCollection(metadata.collection);
+
+  let query = 'mediatype:("' + mediatype + '") AND -identifier:("' + identifier + '")';
+  if (collection) {
+    query += ' AND collection:("' + escapeQueryValue(collection) + '")';
+  } else {
+    const subjects = safeString(metadata.subject).split(";")[0].trim();
+    if (subjects) {
+      query += ' AND subject:("' + escapeQueryValue(subjects) + '")';
+    }
+  }
+
+  const searchUrl = buildAdvancedSearchUrl(query, 10, 1, ["downloads desc"]);
+  const response = apiGetJson(searchUrl);
+  const docs = getDocs(response);
+  const results = docs.map(docToPlatformVideo).filter(Boolean);
+
+  return new VideoPager(results, false);
 };
 
 source.getComments = function(url, continuationToken) {
@@ -322,13 +367,13 @@ class InternetArchiveVideoPager extends VideoPager {
       return source.getHome(this.context.page);
     }
     if (this.context.kind === "search") {
-      return source.search(this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.search(this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, this.context.filters || {}, this.context.page);
     }
     if (this.context.kind === "channelContents") {
-      return source.getChannelContents(this.context.url, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.getChannelContents(this.context.url, this.context.type || Type.Feed.Mixed, this.context.order, this.context.filters || {}, this.context.page);
     }
     if (this.context.kind === "searchChannelContents") {
-      return source.searchChannelContents(this.context.url, this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, {}, this.context.page);
+      return source.searchChannelContents(this.context.url, this.context.query, this.context.type || Type.Feed.Mixed, this.context.order, this.context.filters || {}, this.context.page);
     }
     return new VideoPager([], false);
   }
@@ -353,7 +398,7 @@ function buildMediaQuery() {
   return getMediaTypeQuery(pluginSettings.homeMediaTypeIndex) + " AND -mediatype:(collection)";
 }
 
-function buildSearchQuery(query, type) {
+function buildSearchQuery(query, type, filters) {
   const text = quoteQuery(query);
   let mediaQuery = getMediaTypeQuery();
   if (type === Type.Feed.Video) {
@@ -361,14 +406,24 @@ function buildSearchQuery(query, type) {
   } else if (type === Type.Feed.Audio) {
     mediaQuery = 'mediatype:("audio")';
   }
-  return mediaQuery + " AND -mediatype:(collection) AND (" + text + ")";
+
+  let fullQuery = mediaQuery + " AND -mediatype:(collection) AND (" + text + ")";
+  if (filters) {
+    if (filters.year) {
+      fullQuery += ' AND date:("' + escapeQueryValue(filters.year) + '")';
+    }
+    if (filters.language) {
+      fullQuery += ' AND language:("' + escapeQueryValue(filters.language) + '")';
+    }
+  }
+  return fullQuery;
 }
 
 function buildCollectionSearchQuery(query) {
   return 'mediatype:("collection") AND (' + quoteQuery(query) + ")";
 }
 
-function buildCollectionQuery(identifier, query, type) {
+function buildCollectionQuery(identifier, query, type, filters) {
   let mediaQuery = getMediaTypeQuery();
   if (type === Type.Feed.Video) {
     mediaQuery = 'mediatype:("movies")';
@@ -378,6 +433,9 @@ function buildCollectionQuery(identifier, query, type) {
   let base = mediaQuery + ' AND -mediatype:(collection) AND collection:("' + escapeQueryValue(identifier) + '")';
   if (query && safeString(query).length > 0) {
     base += " AND (" + quoteQuery(query) + ")";
+  }
+  if (filters && filters.year) {
+    base += ' AND date:("' + escapeQueryValue(filters.year) + '")';
   }
   return base;
 }

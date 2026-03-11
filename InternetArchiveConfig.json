@@ -7,11 +7,9 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 5,
+  "version": 7,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "H4eWjZvVs+DhMNajgz18mR52RiMOCml0kiGlErpNYAxvjIPR+FDZ8v1/8IbLeB53mhyOVrFZLJS1K5c9U5kY41Go0ZTMtUUGCRYEBlkKrxAHF159bmIZz0lteTEpr27eXo/dO7pHnWUuPbKToz27U1PMrbAnBkv7OO+aQi8Bpty6v+/ZK+cM3O/amzOVysl74u+K04GNXGUC2+AqODvjCVgvSFwsxiUhILdJkKUG8rhlBzy39epbfMWeeiYPwrEFOQQpxDG7AhmHqDLbTZj8mmw6mzrySR8/dzp5GX3g0BgCn+8j1/LM+7JSAI64GkWNnO/sArj+U9apDy4Q+M8g4QLusWxAEwYVrdOFGCTiNTURHsjdtIFIpBBPiejJxbzrEH9WeqhfdOC7CvXq2ipTwTHUVotYhnjrCwHaSdgznQvmWKFssy9DH0yZX9gpy16Zt00ooOprBF0byPDhGbmKxOplhVArHgiJRGFy4Vpj8F2x5cyLttIptXoUd5bFbhAf3DSyWEYohkT1kkLiDpR09mglBsPX0OLz8Q8RXDRtEtGgaWjV4a+paSf7To/rQz2fXyJrJ/w2ZOKh4tHnpb7fvR7tmzobVFMrUHflslbr4eKsqWy5NY+1XdOB6LhZc73Eud3CRAI1aJ5xHq45WkFMrenfm6VjXen3RWlms6u5DcU=",
-  "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqr5c6qHXuU0t5FVYgvQquAIFmi+KJT1mwjuDRZO0uDNsLW1p5tA7ozFNLmSuKIX9h8Hr775ES7LsGSeGWxEt/q7MmqG1NcMZPyNeDlBiberMNxYV1I6xBh0p/p1AYEOwtgRney4wGIisKdhYX7CyaumPcWMb7kvD7+l2Uy7UpL5eDicwq3yu7KNC7mJHejPLxDt6L+JViJcaPU1vE2ynqN837j2AD1T1WnpytyFZ0cbehgi7rI971gzTnWMH1oP9QHnLwn/Be3cQztvHpRreg2jrcHRwhF5aQuTO8bsWbuWOYlsHI8wxX6e586muqLQ2IkagOy5NSercySytmBDBoPR7CM3m4f1tlRnyZ4VOOdkQOtisqmNVOcjuANpk/kj6kYv+ATmDPvzFy4Veu8IcvhRadWun7qcsgxZITymyXBLQnRIFLGDAb5HpefA6UdxNpuD6HBkXQ6j6UEK7j1PtQR/GGWhoi3DUm2WF0SiwwHzwc99zb7eDORPgkBagzQNpC7itmHuHbdK19RhFS3pKY7xiUTSoflo4+deYWoiiHOWCKRGC4btBl0ML5tT5aDt4lgdkF5WQHRe4rzGzo6Q4xo4pZh6QrEjc05Uxw9ROUrdv3F8peoka8uInARV0aYVNIiJ7u0LyBnX7M6VT6BBQHLx4bMwdkm4tEz/CaLlJFykCAwEAAQ==",
   "packages": [
     "Http"
   ],
@@ -100,6 +98,15 @@
       "Improvement: Add subtitle support (.srt, .vtt);",
       "Improvement: Enhanced search capabilities with media type and 'Most Downloaded' filters;",
       "Improvement: Include subject tags in item description."
+    ],
+    "6": [
+      "Improvement: Implement related content (More like this);",
+      "Improvement: Add 'Year' and 'Language' search filters;",
+      "Improvement: Persist filters and sorts across paginated results."
+    ],
+    "7": [
+      "Fix: Remove invalid script signatures to fix reinstallation issues;",
+      "Fix: Sanitize documentation to remove local IP addresses and private paths."
     ]
   },
   "Testing": {

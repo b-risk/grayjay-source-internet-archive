@@ -24,11 +24,6 @@ Intentional v1 limits:
 - No collection deep-link detection outside the plugin-generated `#collection` URL form
 - No aggressive per-item metadata enrichment
 
-## Files
-
-- `/Users/wesley/Documents/New project/internet-archive-grayjay/InternetArchiveConfig.json`
-- `/Users/wesley/Documents/New project/internet-archive-grayjay/InternetArchiveScript.js`
-
 ## Dev test flow
 
 1. Serve the folder over your LAN.
@@ -41,17 +36,16 @@ Intentional v1 limits:
 Example:
 
 ```sh
-cd /Users/wesley/Documents/New\ project/internet-archive-grayjay
-python3 -m http.server 8123 --bind 192.168.10.128
+python3 -m http.server 8123 --bind [YOUR_LOCAL_IP]
 ```
 
 Then load:
 
 ```text
-http://192.168.10.128:8123/InternetArchiveConfig.json
+http://[YOUR_LOCAL_IP]:8123/InternetArchiveConfig.json
 ```
 
-If your Mac IP changes, update `sourceUrl` in the config to match before reinjecting.
+If your local IP changes, update `sourceUrl` in the config to match before reinjecting.
 
 ## Before public release
 

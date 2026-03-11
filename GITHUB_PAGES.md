@@ -13,8 +13,7 @@ Use a dedicated repository for the plugin and put these files at the repository 
 ## Publish steps
 
 1. Create a new public GitHub repository.
-2. Upload the files from:
-   - `/Users/wesley/Documents/New project/internet-archive-grayjay`
+2. Upload the plugin files to your repository.
 3. In GitHub:
    - `Settings` -> `Pages`
    - `Build and deployment`

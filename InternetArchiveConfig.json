@@ -7,11 +7,11 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 9,
+  "version": 10,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "EYXp9FhA/2qAF07JoEfYxjbCFZvZfO8XvSc4hg6SlYb0ebqGFjgp8e64kr5wpwSpgF6bC4Ezyz8RF1/4ATDjsqojixmnDK7DIWPo9AiwmKiuNaWQC47OWVV7mRbpXaGlAvtQlAyWruYwm8zwcnlF3Ds8uttHACc2m4YfDApUjt4xygF9QpqQDNLNIMpot85xc86oTZO5K6ZPDXw8J7zAG7sByt2zMym3pz5e3diq6mSNcuzzae7ahPJF+/hUwA7eT7AQ8AwseG62hVgHUbI5HgL3KKITPvDHRtVGzWFeEMqHgrAddou0CX3qH8kuS6mapIJGJxAO1f8+yxHTGhCWpA==",
-  "scriptPublicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArAYUj4UK3AevnalaeVDi6ReEHZH5Xrp5z+qpqR3s7gXcYWFvAsYdLsa/0FzDIYOaQxmRPY0Ixh42zoX3YGSLX4rwHZeczCgiWL2fYG9JhcQxvaZvZxt5i0WXGwzmtW1AgN2hFc6jq0Vqicf67XqKXhNGsckNI309T87X2EeDajWFKKYxZ5VJnsxZzN4rUQVrKsQT225KPOBYGrPmy6Gd1lOnDCpmVF1GqJx88qfpZMVQyswSz9k0cupoI1IbrScJftdEabiJHWmkG8AIjy/bbpeRTQ+IgrTdhJWIkVDJGfdDR0TMIyn1gjOl+iVoQar1Os7bHr6l6DJ/AsQwTyEhGQIDAQAB",
+  "scriptSignature": "Cd6Lse+iFDSv+ukjdvyu2GvFKUjSp95fi1B3HqFLdwCHLc52hrU1/02hmAt4If1mkkSIdFB0TBYdRmbRB6Z4EmrcZybzFfX3xxDLgRB1QB2IfYa+2efXvs0lF6ExUbqPyblZYYDxTI2QhWWcz83aGpTzpHBvbkuibwF+56lScbc+LReGWfklLvqlnOhSBHaVTpwRDaCOcz3CSO5EQKIqiNWLa7lPyMA4lXe0OZwrKfQ/pH9N+v04fe+g2Ep3UYPutrzpEaoIgObgETntyYF5354mPPZk+ck4+hr85PKjbp+n7rdzpGWk8jBZov8GNilRxzpMXAy2GgKcEZdplQHeQaOsxYcu6I2NfhgwSu56/mGr+sghBgqNNHtcQflUW98BMk9VEsCw7t5/l4MFhuzF6T9it976CPXlAALSInK+UT+mAFzv9siTBk/QdArgl5s94SotdJshqy24AuLFTLEsBvyzLATCtrp2Cea8AaZvKbvthjWMe3YkpJU7jQj6I92UyQ5M+DgTtE/hHw3IrW41wUUqTNYrz3gza+irdnJeVN0EA83Ji4AWepA3iKrlryFVMHtk8tBwZBXo3Y3yOoMtxjRslR+p5WbC3TJ6pJZR+dPOm3dJxF5TTmeggW530Jxj6gtq+zqbgN4vzOvDFRwMLCCniHKq5dV82M9s+rv76+I=",
+  "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqr5c6qHXuU0t5FVYgvQquAIFmi+KJT1mwjuDRZO0uDNsLW1p5tA7ozFNLmSuKIX9h8Hr775ES7LsGSeGWxEt/q7MmqG1NcMZPyNeDlBiberMNxYV1I6xBh0p/p1AYEOwtgRney4wGIisKdhYX7CyaumPcWMb7kvD7+l2Uy7UpL5eDicwq3yu7KNC7mJHejPLxDt6L+JViJcaPU1vE2ynqN837j2AD1T1WnpytyFZ0cbehgi7rI971gzTnWMH1oP9QHnLwn/Be3cQztvHpRreg2jrcHRwhF5aQuTO8bsWbuWOYlsHI8wxX6e586muqLQ2IkagOy5NSercySytmBDBoPR7CM3m4f1tlRnyZ4VOOdkQOtisqmNVOcjuANpk/kj6kYv+ATmDPvzFy4Veu8IcvhRadWun7qcsgxZITymyXBLQnRIFLGDAb5HpefA6UdxNpuD6HBkXQ6j6UEK7j1PtQR/GGWhoi3DUm2WF0SiwwHzwc99zb7eDORPgkBagzQNpC7itmHuHbdK19RhFS3pKY7xiUTSoflo4+deYWoiiHOWCKRGC4btBl0ML5tT5aDt4lgdkF5WQHRe4rzGzo6Q4xo4pZh6QrEjc05Uxw9ROUrdv3F8peoka8uInARV0aYVNIiJ7u0LyBnX7M6VT6BBQHLx4bMwdkm4tEz/CaLlJFykCAwEAAQ==",
   "packages": [
     "Http"
   ],
@@ -115,6 +115,9 @@
     ],
     "9": [
       "Re-signed with 2048-bit RSA key; bump version to clear cached invalid state."
+    ],
+    "10": [
+      "Fix: re-sign with correct SHA-512 + dedicated grayjay_signing RSA key per official docs."
     ]
   },
   "Testing": {

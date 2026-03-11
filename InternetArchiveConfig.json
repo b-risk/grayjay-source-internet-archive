@@ -7,11 +7,11 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 8,
+  "version": 9,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "WnM/FbkiCziPZfxpcp0UHHSg7V3sy+fzelHxKSJ//WGnJXclwVQZsDhv/WSZHkd/4nCGzvH9AmUYNdbt6sdDZGpEWPQPlqglss5KA6vZ1CF09rKpqYktVD/BmR7ZS7R1fRNEVpwvxOrvFYZ0XP7J3D23Bb1sIUWf/Gb86fuKsYRBfsu+5Cc2WYn8Egh+O/Bfj60MDQ8ZSmwnjmNiFTZtB5cePzJ0SaT/qLD+adXK3jXpOeMcANCV6wpt8XEXWGDi+sPTeej+k6oxOt/9+knJ1BefgOxAcuqS+2RcP/kr4eO3u4UU0vH4HBh5cfztjJE89dhPjlwjEAS/bPvWMpwFK/ntfnFRkNzYxdrpWzNoZ11mIzRfsoIezH6CIuD+/PFSTNWfeU5VCzblxh45BfDN9Lt1UoLFdckjDoVU6EQqlblgEX1hjkqP1xtaTSFAidRst4TgVY6i0DB8wZ5MNw82CGWfA4UuKBmmS79+dKtu8TA6t1oSNlUYUTSB4ryMdGSn/aKb/Pd+/YblOcEgC5NP2yPPETt57skB2G2eb7nkrnkxRPYX59ViUjCYFktKQ9jsfG1xA/udjqHdWJT9GCqJrGkUjDApoYA74D8+vzaBOSJnWLe9Zs7EP9G/MbPF1c4/t328MS9vrvlL9znjsSFQ0XXFpQAA52wAC45JFA+qEiI=",
-  "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxKYeal0bU+KAVLmSW1erRlGi2VPyQZoFkKrSl173sR8IhQ9DkTvghsHmWF5TRH7lv9ewili2Frw0+LPECS/f3GxHobWNGJwWbPaZLh1N5gfwOrBbqbB+0+Le1+4wrOA7WW1oxECMHoLGOQMW/DPmHD2ihAYpsYKuNx6hfeLQE4AHRJhW90jLGpApUN4PIVJfa1G/pXbvpOP56OiV9DmO5c3Kx+XpjIdLw8289+sOiv5V3B0LRKopojp5IIWlWfYMm4/RyhX4FXuD3rriYRkECX9+W7m2XH1Ivv5bVmfORO6IO3uTkaDntqkn/lDZwc2R+i3JhB7LW8qv0JtxF0RTT7KEDsldxRdB0nOHO2S2djgy9r8JIZHeDRDMXfYiXndrZW4rOhMvMfj7PXFM304hioDJkc4k16yrok1GtOyZGNr2YiaT3tEnbzK5XuCFThU8iQ+66t56TlQxnQI7mEqwa+ZthBDa3hvTzxrpVqSOzchITxV001We9Mubq22CK0KrmtW7ZnRCxZBPhc1giVL7y30lp52DKLwwk8Q3OEMiJbM9G9WJAnrQzEnWeHalFyeou0wFT/tFctk/UvpDs0KGu38pKf68QCHq+0jdyUWr0G3zURe/GyggXOTm8A8J76kDDim6p0+/3PTbjnl9wTjoZdg3jfW4cIzR8HOU+c0xRK8CAwEAAQ==",
+  "scriptSignature": "EYXp9FhA/2qAF07JoEfYxjbCFZvZfO8XvSc4hg6SlYb0ebqGFjgp8e64kr5wpwSpgF6bC4Ezyz8RF1/4ATDjsqojixmnDK7DIWPo9AiwmKiuNaWQC47OWVV7mRbpXaGlAvtQlAyWruYwm8zwcnlF3Ds8uttHACc2m4YfDApUjt4xygF9QpqQDNLNIMpot85xc86oTZO5K6ZPDXw8J7zAG7sByt2zMym3pz5e3diq6mSNcuzzae7ahPJF+/hUwA7eT7AQ8AwseG62hVgHUbI5HgL3KKITPvDHRtVGzWFeEMqHgrAddou0CX3qH8kuS6mapIJGJxAO1f8+yxHTGhCWpA==",
+  "scriptPublicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArAYUj4UK3AevnalaeVDi6ReEHZH5Xrp5z+qpqR3s7gXcYWFvAsYdLsa/0FzDIYOaQxmRPY0Ixh42zoX3YGSLX4rwHZeczCgiWL2fYG9JhcQxvaZvZxt5i0WXGwzmtW1AgN2hFc6jq0Vqicf67XqKXhNGsckNI309T87X2EeDajWFKKYxZ5VJnsxZzN4rUQVrKsQT225KPOBYGrPmy6Gd1lOnDCpmVF1GqJx88qfpZMVQyswSz9k0cupoI1IbrScJftdEabiJHWmkG8AIjy/bbpeRTQ+IgrTdhJWIkVDJGfdDR0TMIyn1gjOl+iVoQar1Os7bHr6l6DJ/AsQwTyEhGQIDAQAB",
   "packages": [
     "Http"
   ],
@@ -112,6 +112,9 @@
     ],
     "8": [
       "Fix: Re-signed with 2048-bit RSA and cleaned up JSON formatting to resolve 'Invalid JSON Config' errors."
+    ],
+    "9": [
+      "Re-signed with 2048-bit RSA key; bump version to clear cached invalid state."
     ]
   },
   "Testing": {

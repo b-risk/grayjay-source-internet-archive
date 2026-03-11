@@ -7,7 +7,7 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 5,
+  "version": 6,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
   "scriptSignature": "H4eWjZvVs+DhMNajgz18mR52RiMOCml0kiGlErpNYAxvjIPR+FDZ8v1/8IbLeB53mhyOVrFZLJS1K5c9U5kY41Go0ZTMtUUGCRYEBlkKrxAHF159bmIZz0lteTEpr27eXo/dO7pHnWUuPbKToz27U1PMrbAnBkv7OO+aQi8Bpty6v+/ZK+cM3O/amzOVysl74u+K04GNXGUC2+AqODvjCVgvSFwsxiUhILdJkKUG8rhlBzy39epbfMWeeiYPwrEFOQQpxDG7AhmHqDLbTZj8mmw6mzrySR8/dzp5GX3g0BgCn+8j1/LM+7JSAI64GkWNnO/sArj+U9apDy4Q+M8g4QLusWxAEwYVrdOFGCTiNTURHsjdtIFIpBBPiejJxbzrEH9WeqhfdOC7CvXq2ipTwTHUVotYhnjrCwHaSdgznQvmWKFssy9DH0yZX9gpy16Zt00ooOprBF0byPDhGbmKxOplhVArHgiJRGFy4Vpj8F2x5cyLttIptXoUd5bFbhAf3DSyWEYohkT1kkLiDpR09mglBsPX0OLz8Q8RXDRtEtGgaWjV4a+paSf7To/rQz2fXyJrJ/w2ZOKh4tHnpb7fvR7tmzobVFMrUHflslbr4eKsqWy5NY+1XdOB6LhZc73Eud3CRAI1aJ5xHq45WkFMrenfm6VjXen3RWlms6u5DcU=",
@@ -100,6 +100,11 @@
       "Improvement: Add subtitle support (.srt, .vtt);",
       "Improvement: Enhanced search capabilities with media type and 'Most Downloaded' filters;",
       "Improvement: Include subject tags in item description."
+    ],
+    "6": [
+      "Improvement: Implement related content (More like this);",
+      "Improvement: Add 'Year' and 'Language' search filters;",
+      "Improvement: Persist filters and sorts across paginated results."
     ]
   },
   "Testing": {

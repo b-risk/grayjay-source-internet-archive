@@ -7,10 +7,10 @@
   "sourceUrl": "https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json",
   "repositoryUrl": "https://github.com/swankwc/grayjay-source-internet-archive",
   "scriptUrl": "./InternetArchiveScript.js",
-  "version": 12,
+  "version": 13,
   "iconUrl": "https://archive.org/images/glogo.jpg",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "XOcCGrgunvV3kUxt9gNBsmOezD7hha1qpn1bG9ZFWZH35mrNKVaMeiKzA4PbXfKK5vLSvTqZdPy9musFb3iUwl70shvXr9TtNEm3KRC3x5sSLYlzRegTvEcGiNpt2HvQOV/5jS15OD0zM5WGM+pCLk+f9axOIt1+3nyMvLCYMlWzEG7eTxf/Udy5gBU8xwxY0o30veGJmBNuGv3aW2FHnKSeqhB4UVUBqf/sKz2iM8unMnH7F47vUnqmq8k4MrJZhc4W5kYj1yQeSbh5UIyaVLRcjmaSLn+0JWQkCJnVWlzDwo9iw23FnJpgsTpJddmUDi+4vSR0LOYKlYBdqi+RlXvjkXQ8na8JeGqP1vihSbd/VnuEagVBRInGy4VHx1xgSUnzVJ13Xb0aocIJ0Dy1kalMdFycPVJsm/BecVHplzWz4wJjBUl/w/2d40E1QqVCTswVrBsKAL2uUpj+8hfo5CBo7aIgGfQh25l8cf6gGCN4gRUComKERuFGNAjaX+98drnNXrC7z09ENM3wk2HE9O19BN3a1L0P8Jd707pobW037XDbeexuZz+LRoGqyLc7ltT/Nsrs39O5XeuF7Jz48Lgbxkcc+55BXvxbDqO3hGl7jzgThGwH3dFMaRt7nqsLJr8LM9OFnz3ONa6/I19VQS/aIg6nAj7TEp5L8WlNdIM=",
+  "scriptSignature": "cXEvowSwkO2ga3O/CcCojuFRTjxTvmdsLTfrCZ+zGhdlRbhOA0T3fkApHw6b9o/Bv9dxnNO49awn/F3T7/KXz9Km/hsmcg9jncs2pIaI0GejQNh9G2D8pE7/TmPj+AWhPMyIy87g9hGby2b1zshpPP+6xpRKdBUI6sh3HiM4H+0SnNIyOXIpHGIACakoEWPE4aAR0uFY9lVHO3InB88acwdPl8EmN8c6VYw5BmkaqYl3gnbqD4mqqB0yxeX2DcUWb9jWBgyzqLYzqUPsbUozlA59zZ9jOHCZZkOfZtX6JQn3oxAiefvbAE+hV/JyETMv+iroPml2UmdyWrFlfdTIvmKBQneVGYLys5LjyKMFH6X5YxsRZ6AJyt3h3j1qphgweYTKre5IDEryr9hQ8CvLv+JwFOghdmbVzZU1uRmI5qeJ8ROBFbadHJN/3UK/20CVSgFV8Ff2Jn4TUrA+XjwgD714x9bNAgiBJbo1jDYhxLhATtv/RPc7/7kDUhUXBHhosPC50ob1uBs5gaLD1+Dd3EiMxCWEwt4QF7d0pV1Cg3alNaNNpdR1UjO9Bh4bd1EB9IRl5UsqIMkrUjeYjXEBHiRRHlTO1wR6zAfKvUWnI/8kaTqPGcHcRnVPaxy0Plx3vSwHIQ+QmGYhNkAywk0gXZOQBbrHfwthyhFPLrt1tJw=",
   "scriptPublicKey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqr5c6qHXuU0t5FVYgvQquAIFmi+KJT1mwjuDRZO0uDNsLW1p5tA7ozFNLmSuKIX9h8Hr775ES7LsGSeGWxEt/q7MmqG1NcMZPyNeDlBiberMNxYV1I6xBh0p/p1AYEOwtgRney4wGIisKdhYX7CyaumPcWMb7kvD7+l2Uy7UpL5eDicwq3yu7KNC7mJHejPLxDt6L+JViJcaPU1vE2ynqN837j2AD1T1WnpytyFZ0cbehgi7rI971gzTnWMH1oP9QHnLwn/Be3cQztvHpRreg2jrcHRwhF5aQuTO8bsWbuWOYlsHI8wxX6e586muqLQ2IkagOy5NSercySytmBDBoPR7CM3m4f1tlRnyZ4VOOdkQOtisqmNVOcjuANpk/kj6kYv+ATmDPvzFy4Veu8IcvhRadWun7qcsgxZITymyXBLQnRIFLGDAb5HpefA6UdxNpuD6HBkXQ6j6UEK7j1PtQR/GGWhoi3DUm2WF0SiwwHzwc99zb7eDORPgkBagzQNpC7itmHuHbdK19RhFS3pKY7xiUTSoflo4+deYWoiiHOWCKRGC4btBl0ML5tT5aDt4lgdkF5WQHRe4rzGzo6Q4xo4pZh6QrEjc05Uxw9ROUrdv3F8peoka8uInARV0aYVNIiJ7u0LyBnX7M6VT6BBQHLx4bMwdkm4tEz/CaLlJFykCAwEAAQ==",
   "packages": [
     "Http"
@@ -133,6 +133,12 @@
       "Fix: Comment uses date field (not timestamp) per JSComment.kt",
       "Fix: Comment rating uses RatingScaler (not Rating which does not exist)",
       "Fix: Filter values read as Array per Map<string,Array<string>> contract"
+    ],
+    "13": [
+      "Fix: use VideoSourceDescriptor for muxed video-only files (mp4/avi with embedded audio)",
+      "Fix: use VideoSourceDescriptor for audio-only items (mp3/ogg/flac)",
+      "Fix: only use UnMuxVideoSourceDescriptor when BOTH separate video and audio tracks exist",
+      "This resolves near-universal playback failure - wrong descriptor caused silent/broken playback"
     ]
   },
   "Testing": {

@@ -695,8 +695,20 @@ function buildDownloadUrl(identifier, fileName) {
 }
 
 function createMediaDescriptor(sources) {
-  if (sources.video.length > 0 || sources.audio.length > 0) {
+  const hasVideo = sources.video.length > 0;
+  const hasAudio = sources.audio.length > 0;
+
+  if (hasVideo && hasAudio) {
+    // Truly separate video + audio tracks (rare on IA) — use UnMux
     return new UnMuxVideoSourceDescriptor(sources.video, sources.audio);
+  }
+  if (hasVideo) {
+    // Muxed video files (mp4, avi, ogv, etc) — audio is already embedded
+    return new VideoSourceDescriptor(sources.video);
+  }
+  if (hasAudio) {
+    // Audio-only items (mp3, ogg, flac) — Grayjay plays these via VideoSourceDescriptor
+    return new VideoSourceDescriptor(sources.audio);
   }
   if (sources.hls.length > 0) {
     return new VideoSourceDescriptor([sources.hls[0]]);

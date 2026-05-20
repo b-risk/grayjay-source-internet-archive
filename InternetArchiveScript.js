@@ -1,10 +1,14 @@
-const PLATFORM = "Internet Archive";
-const BASE_URL = "https://archive.org";
-const SEARCH_URL = BASE_URL + "/advancedsearch.php";
-const METADATA_URL = BASE_URL + "/metadata/";
-const IMAGE_URL = BASE_URL + "/services/img/";
-const DETAILS_PATH = "/details/";
-const DOWNLOAD_PATH = "/download/";
+const platform = {
+  name: "Internet Archive",
+  baseUrl: "https://archive.org",
+  searchUrl: "https://archive.org/advancedsearch.php",
+  metadataUrl: "https://archive.org/metadata/",
+  imageUrl: "https://archive.org/services/img/",
+  bannerUrl: "https://dn710002.ca.archive.org/0/items/ad-18-e-478-1133-4-dc-2-9-ab-6-41-ec-22-bc-7493/AD18E478-1133-4DC2-9AB6-41EC22BC7493.png",
+  icon: "https://archive.org/images/glogo.jpg",
+  detailsPath: "/details/",
+  downloadPath: "/download/"
+};
 
 let config = {};
 let pluginSettings = {};
@@ -24,7 +28,8 @@ const SEARCH_FIELDS = [
   "item_size",
   "collection",
   "language",
-  "subject"
+  "subject",
+  "runtime"
 ];
 
 const AUDIO_EXTENSIONS = {
@@ -157,17 +162,16 @@ source.getSearchChannelContentsCapabilities = function() {
 };
 
 source.searchChannelContents = function(channelUrl, query, type, order, filters, continuationToken) {
-  const identifier = extractCollectionIdentifier(channelUrl);
+  const creatorName = extractCreatorIdentifier(channelUrl);
   const page = getPageFromToken(continuationToken);
-  const collectionQuery = buildCollectionQuery(identifier, query, type, filters);
-  let sort = null;
-  if (order === Type.Order.Chronological) {
-    sort = ["publicdate desc"];
-  } else if (order === "Most Downloaded") {
+  const creatorQuery = buildCreatorQuery(creatorName, query, type, filters);
+  // Default to original date descending (newest first) for creator channels
+  let sort = ["date desc"];
+  if (order === "Most Downloaded") {
     sort = ["downloads desc"];
   }
 
-  const url = buildAdvancedSearchUrl(collectionQuery, CHANNEL_ROWS, page, sort);
+  const url = buildAdvancedSearchUrl(creatorQuery, CHANNEL_ROWS, page, sort);
   const response = apiGetJson(url);
   const docs = getDocs(response);
   const results = docs.map(docToPlatformVideo).filter(Boolean);
@@ -184,11 +188,16 @@ source.searchChannelContents = function(channelUrl, query, type, order, filters,
 
 source.searchChannels = function(query, continuationToken) {
   const page = getPageFromToken(continuationToken);
-  const collectionQuery = buildCollectionSearchQuery(query);
-  const url = buildAdvancedSearchUrl(collectionQuery, CHANNEL_ROWS, page, ["downloads desc"]);
+  // Search for items with creators matching the query, then extract unique creators
+  const creatorSearchQuery = buildCreatorSearchQuery(query);
+  const url = buildAdvancedSearchUrl(creatorSearchQuery, CHANNEL_ROWS, page, ["downloads desc"]);
   const response = apiGetJson(url);
   const docs = getDocs(response);
-  const results = docs.map(docToPlatformChannel).filter(Boolean);
+  
+  // Extract unique creators from the search results
+  const creators = extractUniqueCreators(docs);
+  const results = creators.map(creatorNameToPlatformChannel).filter(Boolean);
+  
   return new InternetArchiveChannelPager(results, hasMoreResults(response, page, CHANNEL_ROWS), {
     kind: "searchChannels",
     query: query,
@@ -197,23 +206,30 @@ source.searchChannels = function(query, continuationToken) {
 };
 
 source.isChannelUrl = function(url) {
-  return /^https:\/\/archive\.org\/details\/[^?#]+#collection$/.test(url || "");
+  return /^https:\/\/archive\.org\/details\/[^?#]+#creator$/.test(url || "");
 };
 
 source.getChannel = function(url) {
-  const identifier = extractCollectionIdentifier(url);
-  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
-  return metadataToPlatformChannel(payload);
+  const creatorName = extractCreatorIdentifier(url);
+  return new PlatformChannel({
+    id: makePlatformId("creator:" + creatorName),
+    name: creatorName,
+    thumbnail: platform.imageUrl + encodeURIComponent(creatorName),
+    banner: platform.bannerUrl,
+    subscribers: 0,
+    description: "Videos by " + creatorName,
+    url: normalizeCreatorUrl(creatorName),
+    links: []
+  });
 };
 
 source.getChannelContents = function(url, type, order, filters, continuationToken) {
-  const identifier = extractCollectionIdentifier(url);
+  const creatorName = extractCreatorIdentifier(url);
   const page = getPageFromToken(continuationToken);
-  const query = buildCollectionQuery(identifier, null, type);
-  let sort = null;
-  if (order === Type.Order.Chronological) {
-    sort = ["publicdate desc"];
-  } else if (order === "Most Downloaded") {
+  const query = buildCreatorQuery(creatorName, null, type, filters);
+  // Default to original date descending (newest first) for creator channels
+  let sort = ["date desc"];
+  if (order === "Most Downloaded") {
     sort = ["downloads desc"];
   }
 
@@ -237,7 +253,7 @@ source.isContentDetailsUrl = function(url) {
 
 source.getContentDetails = function(url) {
   const identifier = extractDetailsIdentifier(url);
-  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
+  const payload = apiGetJson(platform.metadataUrl + encodeURIComponent(identifier));
   if (!payload || !payload.metadata) {
     throw new ScriptException("Unable to load Internet Archive item metadata");
   }
@@ -278,13 +294,16 @@ source.getContentDetails = function(url) {
     hls: hlsSource,
     dash: dashSource,
     live: null,
-    subtitles: subtitles
+    subtitles: subtitles,
+    getContentRecommendations: function () {
+      return getSimilarVideosPager(identifier, payload);
+    }
   });
 };
 
 source.getRelatedContent = function(url, continuationToken) {
   const identifier = extractDetailsIdentifier(url);
-  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
+  const payload = apiGetJson(platform.metadataUrl + encodeURIComponent(identifier));
   const metadata = payload.metadata || {};
   const mediatype = safeString(metadata.mediatype);
   const collection = pickPrimaryCollection(metadata.collection);
@@ -307,12 +326,118 @@ source.getRelatedContent = function(url, continuationToken) {
   return new VideoPager(results, false);
 };
 
+function getSimilarVideosPager(identifier, payload) {
+  const metadata = payload.metadata || {};
+  const mediatype = safeString(metadata.mediatype);
+  const collection = pickPrimaryCollection(metadata.collection);
+  const subjects = safeString(metadata.subject);
+  const creator = pickPrimaryCreator(metadata.creator);
+  
+  // Build query for similar videos
+  let queryParts = ['mediatype:("' + mediatype + '")', '-mediatype:(collection)', '-identifier:("' + identifier + '")'];
+  
+  // Prioritize by collection
+  if (collection) {
+    queryParts.push('collection:("' + escapeQueryValue(collection) + '")');
+  }
+  
+  // Add subject matching
+  if (subjects) {
+    const subjectList = subjects.split(";").map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+    if (subjectList.length > 0) {
+      const subjectQueries = subjectList.slice(0, 3).map(function(s) { return 'subject:("' + escapeQueryValue(s) + '")'; });
+      queryParts.push('(' + subjectQueries.join(" OR ") + ')');
+    }
+  }
+  
+  // Add creator matching as fallback
+  if (creator && !collection) {
+    queryParts.push('creator:("' + escapeQueryValue(creator) + '")');
+  }
+  
+  const query = queryParts.join(" AND ");
+  const searchUrl = buildAdvancedSearchUrl(query, 15, 1, ["downloads desc"]);
+  
+  try {
+    const response = apiGetJson(searchUrl);
+    const docs = getDocs(response);
+    const results = docs.map(docToPlatformVideo).filter(Boolean);
+    return new VideoPager(results, false);
+  } catch (e) {
+    return new VideoPager([], false);
+  }
+}
+
+//#region playlists
+source.isPlaylistUrl = function(url) {
+  // IA collections are treated as playlists
+  // Format: https://archive.org/details/collection-name
+  // Exclude creator channels (#creator) and regular items
+  return /^https:\/\/archive\.org\/details\/[^?#]+$/.test(url || "");
+};
+
+source.getPlaylist = function(url) {
+  const identifier = extractDetailsIdentifier(url);
+  const payload = apiGetJson(platform.metadataUrl + encodeURIComponent(identifier));
+  
+  if (!payload || !payload.metadata) {
+    throw new ScriptException("Unable to load playlist metadata");
+  }
+  
+  const metadata = payload.metadata;
+  const isCollection = payload.is_collection || safeString(metadata.mediatype) === "collection";
+  
+  if (!isCollection) {
+    throw new ScriptException("Not a valid playlist/collection");
+  }
+  
+  // Get videos in this collection
+  const collectionVideos = getCollectionVideos(identifier, 1);
+  
+  return new PlatformPlaylistDetails({
+    id: makePlatformId("playlist:" + identifier),
+    name: firstNonEmpty(metadata.title, identifier),
+    thumbnails: new Thumbnails([new Thumbnail(platform.imageUrl + encodeURIComponent(identifier), 0)]),
+    author: new PlatformAuthorLink(
+      makePlatformId("archiveorg"),
+      "Internet Archive",
+      platform.baseUrl,
+      platform.imageUrl + "internetarchive"
+    ),
+    url: url,
+    thumbnail: platform.imageUrl + encodeURIComponent(identifier),
+    videoCount: collectionVideos.videoCount,
+    contents: new PlaylistContentsPager(collectionVideos.videos, collectionVideos.hasMore, {
+      identifier: identifier,
+      page: 2
+    })
+  });
+};
+
+source.searchPlaylists = function(query, type, order, filters, continuationToken) {
+  const page = getPageFromToken(continuationToken);
+  // Search for collections matching the query
+  const collectionQuery = 'mediatype:("collection") AND (' + quoteQuery(query) + ')';
+  const searchUrl = buildAdvancedSearchUrl(collectionQuery, SEARCH_ROWS, page, ["downloads desc"]);
+  const response = apiGetJson(searchUrl);
+  const docs = getDocs(response);
+  
+  const results = docs.map(docToPlatformPlaylist).filter(Boolean);
+  const hasMore = hasMoreResults(response, page, SEARCH_ROWS);
+  
+  return new PlaylistSearchPager(results, hasMore, {
+    query: query,
+    page: page + 1
+  });
+};
+//#endregion
+
 source.getComments = function(url, continuationToken) {
   if (continuationToken) {
     return new CommentPager([], false);
   }
   const identifier = extractDetailsIdentifier(url);
-  const payload = apiGetJson(METADATA_URL + encodeURIComponent(identifier));
+  const payload = apiGetJson(platform.metadataUrl + encodeURIComponent(identifier));
   const reviews = payload.reviews || [];
 
   const results = reviews.map(function(review) {
@@ -336,8 +461,8 @@ source.getComments = function(url, continuationToken) {
       author: new PlatformAuthorLink(
         makePlatformId("reviewer:" + authorId),
         authorName,
-        BASE_URL + "/details/" + authorId,
-        null
+        platform.baseUrl + "/details/" + authorId,
+        platform.icon
       ),
       message: message,
       date: toUnixTimestamp(review.reviewdate || review.createdate),
@@ -389,6 +514,30 @@ class InternetArchiveChannelPager extends ChannelPager {
   }
 }
 
+class PlaylistContentsPager extends VideoPager {
+  constructor(results, hasMore, context) {
+    super(results, hasMore, context);
+  }
+
+  nextPage() {
+    const nextPageResults = getCollectionVideos(this.context.identifier, this.context.page);
+    this.results = nextPageResults.videos;
+    this.hasMore = nextPageResults.hasMore;
+    this.context.page++;
+    return this;
+  }
+}
+
+class PlaylistSearchPager extends VideoPager {
+  constructor(results, hasMore, context) {
+    super(results, hasMore, context);
+  }
+
+  nextPage() {
+    return source.searchPlaylists(this.context.query, null, null, null, this.context.page);
+  }
+}
+
 function getHomeSort() {
   const option = safeString(pluginSettings.homeSortIndex, "0");
   return option === "1" ? ["publicdate desc"] : ["downloads desc"];
@@ -421,6 +570,44 @@ function buildCollectionSearchQuery(query) {
   return 'mediatype:("collection") AND (' + quoteQuery(query) + ")";
 }
 
+function buildCreatorSearchQuery(query) {
+  // Search for items with creators matching the query text
+  return '(mediatype:("movies") OR mediatype:("audio")) AND -mediatype:(collection) AND creator:("' + escapeQueryValue(query) + '")';
+}
+
+function extractUniqueCreators(docs) {
+  const seen = {};
+  const creators = [];
+  for (let i = 0; i < docs.length; i++) {
+    const doc = docs[i];
+    if (!doc || !doc.creator) continue;
+    
+    const creatorList = Array.isArray(doc.creator) ? doc.creator : [doc.creator];
+    for (let j = 0; j < creatorList.length; j++) {
+      const creatorName = safeString(creatorList[j]);
+      if (creatorName && !seen[creatorName]) {
+        seen[creatorName] = true;
+        creators.push(creatorName);
+      }
+    }
+  }
+  return creators;
+}
+
+function creatorNameToPlatformChannel(creatorName) {
+  if (!creatorName) return null;
+  return new PlatformChannel({
+    id: makePlatformId("creator:" + creatorName),
+    name: creatorName,
+    thumbnail: platform.imageUrl + encodeURIComponent(creatorName),
+    banner: platform.bannerUrl,
+    subscribers: 0,
+    description: "Videos by " + creatorName,
+    url: normalizeCreatorUrl(creatorName),
+    links: []
+  });
+}
+
 function buildCollectionQuery(identifier, query, type, filters) {
   let mediaQuery = getMediaTypeQuery();
   if (type === Type.Feed.Videos) {
@@ -435,6 +622,24 @@ function buildCollectionQuery(identifier, query, type, filters) {
   const colLangVal = filters && filters['language'] && filters['language'][0];
   if (colLangVal) {
     base += ' AND language:(' + escapeQueryValue(colLangVal) + ')';
+  }
+  return base;
+}
+
+function buildCreatorQuery(creatorName, query, type, filters) {
+  let mediaQuery = getMediaTypeQuery();
+  if (type === Type.Feed.Videos) {
+    mediaQuery = 'mediatype:("movies")';
+  } else if (type === Type.Feed.Videos) {
+    mediaQuery = 'mediatype:("audio")';
+  }
+  let base = mediaQuery + ' AND -mediatype:(collection) AND creator:("' + escapeQueryValue(creatorName) + '")';
+  if (query && safeString(query).length > 0) {
+    base += " AND (" + quoteQuery(query) + ")";
+  }
+  const langVal = filters && filters['language'] && filters['language'][0];
+  if (langVal) {
+    base += ' AND language:(' + escapeQueryValue(langVal) + ')';
   }
   return base;
 }
@@ -455,7 +660,7 @@ function buildAdvancedSearchUrl(query, rows, page, sort) {
     return "fl[]=" + encodeURIComponent(field);
   }).join("&");
 
-  let url = SEARCH_URL +
+  let url = platform.searchUrl +
     "?q=" + encodeURIComponent(query) +
     "&" + fields +
     "&rows=" + rows +
@@ -501,11 +706,25 @@ function docToPlatformVideo(doc) {
     thumbnails: buildThumbnails(identifier),
     author: buildAuthorLink(identifier, doc.creator, doc.collection),
     uploadDate: toUnixTimestamp(doc.date || doc.publicdate),
-    duration: 0,
+    duration: parseRuntime(doc.runtime) || 0,
     viewCount: toNumber(doc.downloads),
     url: normalizeDetailsUrl(identifier),
     isLive: false
   });
+}
+
+function parseRuntime(runtime) {
+  if (!runtime) return null;
+  // IA runtime can be "HH:MM:SS", "MM:SS", or even just minutes
+  const parts = String(runtime).split(":").map(Number);
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  } else if (parts.length === 2) {
+    return parts[0] * 60 + parts[1];
+  } else if (parts.length === 1 && !isNaN(parts[0])) {
+    return parts[0] * 60;
+  }
+  return null;
 }
 
 function docToPlatformChannel(doc) {
@@ -516,13 +735,44 @@ function docToPlatformChannel(doc) {
   return new PlatformChannel({
     id: makePlatformId("collection:" + identifier),
     name: firstNonEmpty(doc.title, identifier),
-    thumbnail: IMAGE_URL + encodeURIComponent(identifier),
-    banner: IMAGE_URL + encodeURIComponent(identifier),
+    thumbnail: platform.imageUrl + encodeURIComponent(identifier),
+    banner: platform.imageUrl + encodeURIComponent(identifier),
     subscribers: toNumber(doc.downloads),
     description: stringifyDescription(doc.description),
     url: normalizeCollectionUrl(identifier),
     links: []
   });
+}
+
+function docToPlatformPlaylist(doc) {
+  if (!doc || !doc.identifier) {
+    return null;
+  }
+  const identifier = safeString(doc.identifier);
+  return new PlatformPlaylist({
+    id: makePlatformId("playlist:" + identifier),
+    name: firstNonEmpty(doc.title, identifier),
+    thumbnail: platform.imageUrl + encodeURIComponent(identifier),
+    videoCount: toNumber(doc.items_count || doc.downloads),
+    url: normalizeCollectionUrl(identifier)
+  });
+}
+
+function getCollectionVideos(identifier, page) {
+  // Query for items in this collection, sorted by date (newest first)
+  const query = '(mediatype:("movies") OR mediatype:("audio")) AND -mediatype:(collection) AND collection:("' + escapeQueryValue(identifier) + '")';
+  const url = buildAdvancedSearchUrl(query, CHANNEL_ROWS, page, ["date desc"]);
+  const response = apiGetJson(url);
+  const docs = getDocs(response);
+  const videos = docs.map(docToPlatformVideo).filter(Boolean);
+  const total = response && response.response ? toNumber(response.response.numFound) : 0;
+  const hasMore = page * CHANNEL_ROWS < total;
+  
+  return {
+    videos: videos,
+    hasMore: hasMore,
+    videoCount: total
+  };
 }
 
 function metadataToPlatformChannel(payload) {
@@ -531,8 +781,8 @@ function metadataToPlatformChannel(payload) {
   return new PlatformChannel({
     id: makePlatformId("collection:" + identifier),
     name: firstNonEmpty(metadata.title, identifier),
-    thumbnail: IMAGE_URL + encodeURIComponent(identifier),
-    banner: IMAGE_URL + encodeURIComponent(identifier),
+    thumbnail: platform.imageUrl + encodeURIComponent(identifier),
+    banner: platform.imageUrl + encodeURIComponent(identifier),
     subscribers: toNumber(metadata.downloads),
     description: stringifyDescription(metadata.description),
     url: normalizeCollectionUrl(identifier),
@@ -541,15 +791,29 @@ function metadataToPlatformChannel(payload) {
 }
 
 function buildAuthorLink(identifier, creator, collections) {
-  const collectionId = pickPrimaryCollection(collections) || identifier;
-  const authorName = firstNonEmpty(normalizeNameValue(creator), collectionId);
+  const creatorName = pickPrimaryCreator(creator);
+  const collectionId = pickPrimaryCollection(collections);
+  const authorName = firstNonEmpty(creatorName, collectionId, identifier);
+  // Prefer creator channel if available, fallback to collection
+  const channelUrl = creatorName ? normalizeCreatorUrl(creatorName) : normalizeCollectionUrl(collectionId || identifier);
+  const thumbnailUrl = collectionId ? platform.imageUrl + encodeURIComponent(collectionId) : platform.imageUrl + encodeURIComponent(identifier);
   return new PlatformAuthorLink(
-    makePlatformId("collection:" + collectionId),
+    makePlatformId(creatorName ? "creator:" + creatorName : "collection:" + (collectionId || identifier)),
     authorName,
-    normalizeCollectionUrl(collectionId),
-    IMAGE_URL + encodeURIComponent(collectionId),
+    channelUrl,
+    thumbnailUrl,
     0
   );
+}
+
+function pickPrimaryCreator(creator) {
+  if (Array.isArray(creator) && creator.length > 0) {
+    return safeString(creator[0]);
+  }
+  if (typeof creator === "string" && creator.length > 0) {
+    return creator;
+  }
+  return null;
 }
 
 function pickPrimaryCollection(collections) {
@@ -564,7 +828,7 @@ function pickPrimaryCollection(collections) {
 
 function buildThumbnails(identifier) {
   return new Thumbnails([
-    new Thumbnail(IMAGE_URL + encodeURIComponent(identifier), 512)
+    new Thumbnail(platform.imageUrl + encodeURIComponent(identifier), 512)
   ]);
 }
 
@@ -691,7 +955,7 @@ function buildSourceName(file) {
 }
 
 function buildDownloadUrl(identifier, fileName) {
-  return BASE_URL + DOWNLOAD_PATH + encodeURIComponent(identifier) + "/" + encodePath(fileName);
+  return platform.baseUrl + platform.downloadPath + encodeURIComponent(identifier) + "/" + encodePath(fileName);
 }
 
 function createMediaDescriptor(sources) {
@@ -720,7 +984,7 @@ function createMediaDescriptor(sources) {
 }
 
 function normalizeDetailsUrl(identifier) {
-  return BASE_URL + DETAILS_PATH + encodeURIComponent(identifier);
+  return platform.baseUrl + platform.detailsPath + encodeURIComponent(identifier);
 }
 
 function normalizeCollectionUrl(identifier) {
@@ -739,8 +1003,16 @@ function extractCollectionIdentifier(url) {
   return extractDetailsIdentifier(url).replace(/#collection$/, "");
 }
 
+function extractCreatorIdentifier(url) {
+  return extractDetailsIdentifier(url).replace(/#creator$/, "");
+}
+
+function normalizeCreatorUrl(creatorName) {
+  return platform.baseUrl + platform.detailsPath + encodeURIComponent(creatorName) + "#creator";
+}
+
 function makePlatformId(id) {
-  return new PlatformID(PLATFORM, id, config.id);
+  return new PlatformID(platform.name, id, config.id);
 }
 
 function looksPlayableDoc(doc) {

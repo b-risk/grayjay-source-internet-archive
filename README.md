@@ -1,33 +1,46 @@
-# Grayjay Internet Archive Plugin
+### Grayjay Internet Archive
 
-A full-featured plugin for [Grayjay](https://grayjay.app) that allows you to browse and play public audio and video content from the [Internet Archive](https://archive.org).
+This plugin adds support for the platform [Internet Archive](https://archive.org/), allowing you to browse and play public audio and video content in Grayjay.
 
-## Features
+This is a maintained fork of [Wesley Swank's plugin](https://github.com/swankwc/grayjay-source-internet-archive) with significant changes added.
 
-- **Home Feed**: Browse popular and recently added public audio and video.
-- **Advanced Search**: Search for items with support for media types (Video, Audio, Mixed), sorting by "Most Downloaded" or "Recently Added", and filtering by Year or Language.
-- **Search Suggestions**: Find what you're looking for faster with real-time title suggestions.
-- **Collections as Channels**: Browse Internet Archive collections as channels, view their contents, and search within them.
-- **Rich Content Details**: View item descriptions, subject tags, and community reviews.
-- **Broad Format Support**: Stream direct media files, HLS, or DASH manifests. Includes support for subtitles (.srt, .vtt).
-- **Related Content**: Discover similar items with the "More like this" feature.
+### Installation
 
-## Installation
+You can install the plugin by scanning this QR code:
+![QR Code](https://raw.githubusercontent.com/b-risk/grayjay-source-internet-archive/refs/heads/main/Imgs/qr-code.png)
 
-To install this plugin in Grayjay:
+Alternatively, you can add it manually by using this link:
+```
+grayjay://plugin/https://raw.githubusercontent.com/b-risk/grayjay-source-internet-archive/refs/heads/main/InternetArchiveConfig.json
+```
 
-1. Open Grayjay.
-2. Go to **Settings** -> **Sources**.
-3. Tap the **+** or **Add Source** button.
-4. Select **Add from URL**.
-5. Enter the following URL:
-   ```
-   https://swankwc.github.io/grayjay-source-internet-archive/InternetArchiveConfig.json
-   ```
-6. Tap **Add** and follow the prompts to install.
+### Features
 
-## License
+- [x] Home feed (popular and recently added audio/video)
+- [x] Advanced search (media type, sort by downloads/date, year/language filters)
+- [x] Search suggestions
+- [x] Creators as channels (sorted newest first, with pagination and search)
+- [x] Item details (descriptions, subject tags, community reviews)
+- [x] Video playback (direct files, HLS, DASH)
+- [x] Audio playback (mp3, ogg, flac, and more)
+- [x] Subtitles (.srt, .vtt)
+- [x] Related content ("More like this")
+- [x] Video comments
+- [x] Infinite scroll pagination
 
-Copyright (C) 2026 Wesley Swank
+### Contributions
 
-Licensed under the [GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)](LICENSE).
+Contributions are welcome, feel free to submit pull requests if you think you can improve something or fix a bug.
+
+### Signing
+
+```bash
+# Generate keypair
+ssh-keygen -t rsa -b 2048 -m PEM -f ./private-key.pem
+
+# Encode it in Base64 and set the environment variable
+export SIGNING_PRIVATE_KEY="$(base64 -w 0 ./private-key.pem)"
+
+# Run the sign script (use git bash on Windows):
+sh ./sign-script.sh ./InternetArchiveScript.js ./InternetArchiveConfig.json
+```

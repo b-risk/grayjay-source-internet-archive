@@ -7,6 +7,7 @@ This is a maintained fork of [Wesley Swank's plugin](https://github.com/swankwc/
 ### Installation
 
 You can install the plugin by scanning this QR code:
+
 ![QR Code](https://raw.githubusercontent.com/b-risk/grayjay-source-internet-archive/refs/heads/main/Imgs/qr-code.png)
 
 Alternatively, you can add it manually by using this link:

@@ -37,11 +37,11 @@ Contributions are welcome, feel free to submit pull requests if you think you ca
 
 ```bash
 # Generate keypair
-ssh-keygen -t rsa -b 2048 -m PEM -f ./private-key.pem
+ssh-keygen -t rsa -b 2048 -m PEM -f ./Signatures/private-key.pem
 
 # Encode it in Base64 and set the environment variable
-export SIGNING_PRIVATE_KEY="$(base64 -w 0 ./private-key.pem)"
+export SIGNING_PRIVATE_KEY="$(base64 -w 0 ./Signatures/private-key.pem)"
 
 # Run the sign script (use git bash on Windows):
-sh ./sign-script.sh ./InternetArchiveScript.js ./InternetArchiveConfig.json
+sh ./sign-script.sh ./Signatures/InternetArchiveScript.js ./Signatures/InternetArchiveConfig.json
 ```

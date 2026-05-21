@@ -10,8 +10,8 @@
   "version": 14,
   "iconUrl": "./Imgs/InternetArchiveIcon.png",
   "id": "8f3b3e58-2dc8-44c0-9f52-7d8a4fa7e9a1",
-  "scriptSignature": "",
-  "scriptPublicKey": "",
+  "scriptSignature": "Qc5HTEoxIV2NKj3VQIOMuWyo6kEFWxJ2Vc450DW/oAPDBaTd8JebZ0swPlOeVlYFqWFeGsusYWb8zE/rroAiGsDK70/eLBws/xWFa8m308nkKwBZjhzelSOCtVYV7MjCR+P5OQ9w0eoDFrDE3rSASA41T0gu3aEDfogR5mt7X0h0RpMgd8sc1f2fONtXHGktg3I2pb23C0O0F3QMQ3vSx8W2RmGCTxCezVMMxAY5UrbY2WLLeZwWjhe5l25TqJ8awnIFVByOhP3QHijhougYhTlrcSXXMngcRiOHikTm811ZPm2oHDI/di86m2mmdBG2ux+nZt//Ahx9bFsmy79cLQ==",
+  "scriptPublicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwlcNEM21joBN2PDlpyxqZ51j0Uj0Fkua+C40flqvzjFBKaonh78/zboOjMB3jssTkm1Ae+4jSxTl2bNXuIH7XK/KUKlQX2B3Y235At4c9ilsKshRAhyS6N8e+HbbBqR98nnUJzSYS0Ah4vr8fvCMIBnSWVJYqSR0issXtjSRkNNIRzuKtEgidTBfdVhKIbgiPVbgx+6zNgukp+b3WkSgEVZ4EX9mrtheazy0e/FcQrTxQL26Kc60EexbCupgGOngDIJ98lqP1+l40LV+Nx5qzgLawcoyMcD+rpvvgrDHNGxwNFGnT4qTqrDjqckBA2p6nA2ck5+wIGATxHI94Ko13QIDAQAB",
   "packages": [
     "Http"
   ],

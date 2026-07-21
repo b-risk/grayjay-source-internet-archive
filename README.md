@@ -1,5 +1,5 @@
-[!WARNING]
-This project is being deprecated in favor of the new official Grayjay plugin, you can continue to use that instead: 
+> [!WARNING]
+> This project is being deprecated in favor of the new official Grayjay plugin, you can continue to use that instead: 
 https://gitlab.futo.org/videostreaming/plugins/internet-archive
 
 ### Grayjay Internet Archive

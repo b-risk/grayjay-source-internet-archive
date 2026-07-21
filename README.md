@@ -1,3 +1,7 @@
+[!WARNING]
+This project is being deprecated in favor of the new official Grayjay plugin, you can continue to use that instead: 
+https://gitlab.futo.org/videostreaming/plugins/internet-archive
+
 ### Grayjay Internet Archive
 
 This plugin adds support for the platform [Internet Archive](https://archive.org/), allowing you to browse and play public audio and video content in Grayjay.
